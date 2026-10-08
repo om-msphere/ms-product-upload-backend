@@ -1,7 +1,7 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, HTTPException, Query, status
 
 from app.config import get_settings
-from app.schemas import ImageItem, ImageList, SkuInfo, SkuList, SkuPath, SkuSummary
+from app.schemas import ImageItem, ImageList, SkuDeleted, SkuInfo, SkuList, SkuPath, SkuSummary
 from app.storage import internal_client, public_client, sku_prefix
 
 router = APIRouter(prefix="/skus", tags=["skus"])
@@ -79,3 +79,22 @@ def list_images(sku: SkuPath) -> ImageList:
         for o in objects
     ]
     return ImageList(sku=sku, images=images)
+
+
+@router.delete("/{sku}", response_model=SkuDeleted)
+def delete_sku(sku: SkuPath) -> SkuDeleted:
+    """Delete a SKU and all of its images."""
+    sku = sku.upper()
+    keys = [o["Key"] for o in _list_objects(sku_prefix(sku))]
+    if not keys:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "SKU not found")
+
+    s3 = internal_client()
+    bucket = get_settings().s3_bucket
+    # delete_objects accepts at most 1000 keys per call.
+    for i in range(0, len(keys), 1000):
+        s3.delete_objects(
+            Bucket=bucket,
+            Delete={"Objects": [{"Key": k} for k in keys[i : i + 1000]], "Quiet": True},
+        )
+    return SkuDeleted(sku=sku, deleted=len(keys))

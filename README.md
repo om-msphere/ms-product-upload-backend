@@ -80,6 +80,7 @@ API docs are available at `/docs` on the running service.
 | GET | `/health` | Service status |
 | GET | `/skus` | List SKUs with image count and cover image. Supports `limit` and `offset` |
 | GET | `/skus/{sku}` | Check if a SKU has images |
+| DELETE | `/skus/{sku}` | Delete a SKU and all its images |
 | GET | `/skus/{sku}/images` | List images for a SKU |
 | POST | `/skus/{sku}/images` | Upload an image (form-data, field `file`) |
 | DELETE | `/skus/{sku}/images/{filename}` | Delete an image |

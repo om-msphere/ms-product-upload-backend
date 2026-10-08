@@ -16,6 +16,11 @@ class SkuInfo(BaseModel):
     image_count: int
 
 
+class SkuDeleted(BaseModel):
+    sku: str
+    deleted: int
+
+
 class ImageItem(BaseModel):
     key: str
     filename: str
