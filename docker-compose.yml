@@ -14,23 +14,3 @@ services:
       timeout: 5s
       retries: 3
       start_period: 10s
-    depends_on:
-      - rustfs
-
-  rustfs:
-    image: rustfs/rustfs:latest
-    container_name: rustfs
-    restart: unless-stopped
-    ports:
-      - "9000:9000"   
-      - "9002:9001" 
-    environment:
-      RUSTFS_ACCESS_KEY: ${S3_ACCESS_KEY}
-      RUSTFS_SECRET_KEY: ${S3_SECRET_KEY}
-      RUSTFS_CONSOLE_ENABLE: "true"
-    volumes:
-      - rustfs-data:/data
-
-volumes:
-  rustfs-data:
-    external: true  

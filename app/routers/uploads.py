@@ -7,7 +7,7 @@ from fastapi.concurrency import run_in_threadpool
 
 from app.config import get_settings
 from app.schemas import ImageItem, SkuPath
-from app.storage import internal_client, public_client, sku_prefix
+from app.storage import s3_client, sku_prefix
 
 router = APIRouter(prefix="/skus", tags=["images"])
 
@@ -54,10 +54,10 @@ async def upload_image(sku: SkuPath, file: UploadFile = File(..., description="J
 
     # boto3 is blocking; run it off the event loop so other requests keep flowing.
     await run_in_threadpool(
-        internal_client().put_object, Bucket=s.s3_bucket, Key=key, Body=data, ContentType=content_type
+        s3_client().put_object, Bucket=s.s3_bucket, Key=key, Body=data, ContentType=content_type
     )
 
-    url = public_client().generate_presigned_url(
+    url = s3_client().generate_presigned_url(
         "get_object",
         Params={"Bucket": s.s3_bucket, "Key": key},
         ExpiresIn=s.view_url_expires,
@@ -69,7 +69,7 @@ async def upload_image(sku: SkuPath, file: UploadFile = File(..., description="J
 def delete_image(sku: SkuPath, filename: str = Path(pattern=r"^[A-Za-z0-9_-][A-Za-z0-9_.-]{0,127}$")) -> None:
     s = get_settings()
     key = f"{sku_prefix(sku.upper())}{filename}"
-    s3 = internal_client()
+    s3 = s3_client()
     try:
         s3.head_object(Bucket=s.s3_bucket, Key=key)
     except ClientError as e:

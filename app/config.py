@@ -10,7 +10,6 @@ class Settings(BaseSettings):
     s3_region: str = "us-east-1"
     s3_access_key: str
     s3_secret_key: str
-    s3_internal_endpoint: str
     s3_public_endpoint: str
 
     upload_prefix: str = "uploads"
