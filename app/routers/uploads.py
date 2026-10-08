@@ -9,7 +9,7 @@ from app.config import get_settings
 from app.schemas import ImageItem, SkuPath
 from app.storage import internal_client, public_client, sku_prefix
 
-router = APIRouter(prefix="/api/v1/skus", tags=["images"])
+router = APIRouter(prefix="/skus", tags=["images"])
 
 # Detect the real image type from the file's first bytes, not the name or header.
 SIGNATURES = {

@@ -4,7 +4,7 @@ from app.config import get_settings
 from app.schemas import ImageItem, ImageList, SkuInfo, SkuList, SkuPath, SkuSummary
 from app.storage import internal_client, public_client, sku_prefix
 
-router = APIRouter(prefix="/api/v1/skus", tags=["skus"])
+router = APIRouter(prefix="/skus", tags=["skus"])
 
 
 def _list_objects(prefix: str) -> list[dict]:
