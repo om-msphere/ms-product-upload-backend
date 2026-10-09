@@ -1,0 +1,2 @@
+@Library("ms_shared_library") _
+  ms_product_upload()
